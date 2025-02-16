@@ -1,0 +1,36 @@
+RESULTADOS DEL PROBLEMA DE PROGRAMACIÓN LINEAL
+==================================================
+
+Estado de la solución: Optimal
+
+Valor óptimo de la función objetivo: 55.4545
+
+VALORES DE LAS VARIABLES:
+x1 = 47.2727
+x2 = 4.0909
+
+PRECIOS SOMBRA:
+Restricción 1: 0.2727
+Restricción 2: 0.1818
+
+COSTOS REDUCIDOS:
+x1: 0.0000
+x2: 0.0000
+
+ANÁLISIS DE SENSIBILIDAD:
+
+Para las variables:
+x1:
+  Rango inferior: None
+  Rango superior: 0
+x2:
+  Rango inferior: None
+  Rango superior: 0
+
+Para las restricciones:
+restriccion_1:
+  Precio sombra: 0.27272727
+  Valor actual RHS: -150.0
+restriccion_2:
+  Precio sombra: 0.18181818
+  Valor actual RHS: -80.0

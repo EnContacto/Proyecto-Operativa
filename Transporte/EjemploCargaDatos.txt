@@ -1,0 +1,16 @@
+# Número de orígenes
+3
+# Número de destinos
+4
+# Nombres de los orígenes (separados por espacios)
+Fabrica1 Fabrica2 Fabrica3
+# Nombres de los destinos (separados por espacios)
+Tienda1 Tienda2 Tienda3 Tienda4
+# Matriz de costos (una fila por origen, costos separados por espacios)
+10 12 8 11
+13 15 14 10
+13 12 11 9
+# Ofertas de cada origen (separadas por espacios)
+100 150 120
+# Demandas de cada destino (separadas por espacios)
+80 90 110 90
