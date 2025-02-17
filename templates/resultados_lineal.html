@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de Programación Lineal</title>
+    <!-- Enlazar el archivo CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        /* Estilos adicionales para resultados_lineal.html */
+        .resultados-container {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        .resultados-container h1, .resultados-container h2, .resultados-container h3 {
+            color: #2575fc;
+        }
+
+        .resultados-container ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .resultados-container ul li {
+            background: #f4f4f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .analizar-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .analizar-button:hover {
+            background: #6a11cb;
+        }
+
+        #interpretacion {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            background: #f9f9f9;
+            display: none;
+            white-space: pre-wrap; /* Para mantener el formato del texto */
+        }
+
+        /* Animación de escritura */
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .typing-animation {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 3s steps(40, end);
+        }
+    </style>
+    <script>
+        function analizarResultados() {
+            const resultados = {{ resultados | tojson | safe }};
+            fetch('/analizar_lineal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ resultados: resultados }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const interpretacionDiv = document.getElementById('interpretacion');
+                interpretacionDiv.innerText = ''; // Limpiar el contenido previo
+                interpretacionDiv.style.display = 'block';
+
+                // Animación de escritura
+                const texto = data.interpretacion;
+                let i = 0;
+                const speed = 50; // Velocidad de la animación (ms por caracter)
+                function typeWriter() {
+                    if (i < texto.length) {
+                        interpretacionDiv.innerHTML += texto.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, speed);
+                    }
+                }
+                typeWriter();
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+    <!-- Banner principal -->
+    <div class="banner">
+        <h1>Resultados de Programación Lineal</h1>
+        <p>Análisis detallado de la solución óptima.</p>
+    </div>
+
+    <!-- Contenedor de resultados -->
+    <div class="resultados-container">
+        <h2>Estado de la solución: {{ resultados['estado'] }}</h2>
+        <h2>Valor óptimo de la función objetivo: {{ resultados['valor_objetivo'] | round(4) }}</h2>
+        
+        <h3>Valores de las variables:</h3>
+        <ul>
+            {% for var, valor in resultados['variables'].items() %}
+            <li>{{ var }} = {{ valor | round(4) }}</li>
+            {% endfor %}
+        </ul>
+        
+        <h3>Precios sombra (variables duales):</h3>
+        <ul>
+            {% for dual in resultados['dual_restricciones'] %}
+            <li>Restricción {{ loop.index }}: {{ dual | round(4) }}</li>
+            {% endfor %}
+        </ul>
+        
+        <h3>Costos reducidos:</h3>
+        <ul>
+            {% for var, reducido in resultados['reducidos'].items() %}
+            <li>{{ var }}: {{ reducido | round(4) }}</li>
+            {% endfor %}
+        </ul>
+        
+        <h3>Análisis de sensibilidad:</h3>
+        <h4>Para las variables:</h4>
+        <ul>
+            {% for var, rangos in resultados['sensibilidad']['variables'].items() %}
+            <li>{{ var }}:
+                <ul>
+                    <li>Rango inferior: {{ rangos['rango_inferior'] }}</li>
+                    <li>Rango superior: {{ rangos['rango_superior'] }}</li>
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+        
+        <h4>Para las restricciones:</h4>
+        <ul>
+            {% for rest, datos in resultados['sensibilidad']['restricciones'].items() %}
+            <li>{{ rest }}:
+                <ul>
+                    <li>Precio sombra: {{ datos['dual'] }}</li>
+                    <li>Valor actual RHS: {{ datos['rhs'] }}</li>
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+        
+        <!-- Botón para analizar -->
+        <button class="analizar-button" onclick="analizarResultados()">Analizar</button>
+        
+        <!-- Área para mostrar la interpretación -->
+        <div id="interpretacion"></div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer>
+        <p>&copy; 2025 Problemas de Optimización. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>

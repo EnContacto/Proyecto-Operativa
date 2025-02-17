@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problemas de Optimización</title>
+    <!-- Enlazar el archivo CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Banner principal -->
+    <div class="banner">
+        <h1>Problemas de Optimización</h1>
+        <p>Resuelve problemas de transporte, programación lineal y redes de manera eficiente.</p>
+    </div>
+
+    <!-- Contenedor de secciones -->
+    <div class="container">
+        <!-- Sección de Transporte -->
+        <div class="section">
+            <img src="{{ url_for('static', filename='images/transporte.png') }}" alt="Transporte" style="width: 50px; height: auto;">
+            <h2>Problema de Transporte</h2>
+            <p>Optimiza la distribución de recursos desde múltiples orígenes a varios destinos con costos mínimos.</p>
+            <a href="{{ url_for('transporte') }}">Resolver Problema</a>
+        </div>
+
+        <!-- Sección de Programación Lineal -->
+        <div class="section">
+            <img src="{{ url_for('static', filename='images/lineal.png') }}" alt="Programación Lineal" style="width: 50px; height: auto;">
+            <h2>Programación Lineal</h2>
+            <p>Maximiza o minimiza funciones lineales sujetas a restricciones lineales.</p>
+            <a href="{{ url_for('lineal') }}">Resolver Problema</a>
+        </div>
+
+        <!-- Sección de Redes -->
+        <div class="section">
+            <img src="{{ url_for('static', filename='images/redes.jpeg') }}" alt="Redes" style="width: 50px; height: auto;">
+            <h2>Problema de Redes</h2>
+            <p>Encuentra la ruta más corta o el flujo máximo en una red de nodos y conexiones.</p>
+            <a href="{{ url_for('redes') }}">Resolver Problema</a>
+        </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer>
+        <p>&copy; 2025 Problemas de Optimización. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>

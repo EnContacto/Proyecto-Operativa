@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de Redes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .resultados-container {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        .resultados-container h1, .resultados-container h2 {
+            color: #2575fc;
+        }
+        .grafo-img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <h1>Resultados de Redes</h1>
+        <p>Ruta más corta y gráfico del grafo.</p>
+    </div>
+
+    <div class="resultados-container">
+        <h2>Ruta más corta:</h2>
+        <p>{{ resultados['ruta'] | join(' -> ') }}</p>
+        
+        <h2>Distancia total:</h2>
+        <p>{{ resultados['distancia'] }}</p>
+        
+        <h2>Gráfico del Grafo</h2>
+        <img class="grafo-img" src="{{ url_for('static', filename='grafo.png') }}" alt="Grafo">
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Problemas de Optimización. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
