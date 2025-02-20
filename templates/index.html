@@ -16,6 +16,14 @@
 
     <!-- Contenedor de secciones -->
     <div class="container">
+         <!-- Sección de Programación Lineal -->
+         <div class="section">
+            <img src="{{ url_for('static', filename='images/lineal.png') }}" alt="Programación Lineal" style="width: 50px; height: auto;">
+            <h2>Programación Lineal</h2>
+            <p>Maximiza o minimiza funciones lineales sujetas a restricciones lineales.</p>
+            <a href="{{ url_for('lineal') }}">Resolver Problema</a>
+        </div>
+
         <!-- Sección de Transporte -->
         <div class="section">
             <img src="{{ url_for('static', filename='images/transporte.png') }}" alt="Transporte" style="width: 50px; height: auto;">
@@ -24,12 +32,11 @@
             <a href="{{ url_for('transporte') }}">Resolver Problema</a>
         </div>
 
-        <!-- Sección de Programación Lineal -->
         <div class="section">
-            <img src="{{ url_for('static', filename='images/lineal.png') }}" alt="Programación Lineal" style="width: 50px; height: auto;">
-            <h2>Programación Lineal</h2>
+            <img src="{{ url_for('static', filename='images/lineal.png') }}" alt="Programación Lineal Entera" style="width: 50px; height: auto;">
+            <h2>Programación Lineal Entera</h2>
             <p>Maximiza o minimiza funciones lineales sujetas a restricciones lineales.</p>
-            <a href="{{ url_for('lineal') }}">Resolver Problema</a>
+            <a href="{{ url_for('ple') }}">Resolver Problema</a>
         </div>
 
         <!-- Sección de Redes -->
@@ -38,6 +45,15 @@
             <h2>Problema de Redes</h2>
             <p>Encuentra la ruta más corta o el flujo máximo en una red de nodos y conexiones.</p>
             <a href="{{ url_for('redes') }}">Resolver Problema</a>
+        </div>
+        
+            <!-- Sección de Métodos Lineal/Transporte -->
+        <div class="section">
+            <img src="{{ url_for('static', filename='images/metodos.png') }}" alt="Metodos" style="width: 50px; height: auto;">
+            <h2>Resolución con diversos Métodos</h2>
+            <p>Usa el método de la Gran M para problemas de optimización o el método de Vogel para problemas de transporte.</p>
+            <a href="{{ url_for('bigm') }}">Método de la Gran M</a>
+            <a href="{{ url_for('vogel') }}">Método de Vogel</a>
         </div>
     </div>
 

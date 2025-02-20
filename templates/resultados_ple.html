@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados de Transporte</title>
+    <title>Resultados de Programación Lineal</title>
     <!-- Enlazar el archivo CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <style>
-        /* Estilos adicionales para resultados_transporte.html */
+        /* Estilos adicionales para resultados_lineal.html */
         .resultados-container {
             padding: 20px;
             background: white;
@@ -69,37 +69,21 @@
             white-space: nowrap;
             animation: typing 3s steps(40, end);
         }
-
-        /* Estilos para el campo de contexto */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
     </style>
 <script>
     function analizarResultados() {
         const resultados = {{ resultados | tojson | safe }};
-        const contexto = document.getElementById('contexto').value;  // Obtener el contexto del campo de texto
+        const contexto = document.getElementById('contexto').value;
 
-        fetch('/analizar_transporte', {
+        // Incluir el tipo de problema en los resultados
+        resultados.tipo = "{{ resultados.tipo }}";  // Asegúrate de que el tipo esté disponible en los resultados
+
+        fetch('/analizar_ple', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ resultados: resultados, contexto: contexto }),  // Incluir el contexto en la solicitud
+            body: JSON.stringify({ resultados: resultados, contexto: contexto }),
         })
         .then(response => {
             if (!response.ok) {
@@ -135,43 +119,52 @@
 <body>
     <!-- Banner principal -->
     <div class="banner">
-        <h1>Resultados del Problema de Transporte</h1>
+        <h1>Resultados de Programación Lineal</h1>
         <p>Análisis detallado de la solución óptima.</p>
     </div>
 
     <!-- Contenedor de resultados -->
     <div class="resultados-container">
         <h2>Estado de la solución: {{ resultados['estado'] }}</h2>
-        <h2>Costo total de transporte: {{ resultados['valor_objetivo'] | round(2) }}</h2>
+        <h2>Valor óptimo de la función objetivo: {{ resultados['valor_objetivo'] | round(4) }}</h2>
         
-        <h3>Flujos óptimos de transporte:</h3>
+        <h3>Valores de las variables:</h3>
         <ul>
-            {% for ruta, cantidad in resultados['flujos'].items() %}
-            <li>De {{ ruta.split('-')[0] }} a {{ ruta.split('-')[1] }}: {{ cantidad | round(2) }} unidades</li>
+            {% for var, valor in resultados['variables'].items() %}
+            <li>{{ var }} = {{ valor | round(4) }}</li>
+            {% endfor %}
+        </ul>
+        
+        <h3>Precios sombra (variables duales):</h3>
+        <ul>
+            {% for dual in resultados['dual_restricciones'] %}
+            <li>Restricción {{ loop.index }}: {{ dual | round(4) }}</li>
+            {% endfor %}
+        </ul>
+        
+        <h3>Costos reducidos:</h3>
+        <ul>
+            {% for var, reducido in resultados['reducidos'].items() %}
+            <li>{{ var }}: {{ reducido | round(4) }}</li>
             {% endfor %}
         </ul>
         
         <h3>Análisis de sensibilidad:</h3>
-        <h4>Para orígenes (ofertas):</h4>
+        <h4>Para las variables:</h4>
         <ul>
-            {% for origen in datos['origenes'] %}
-            <li>{{ origen }}: Precio sombra {{ resultados['analisis_sensibilidad']['origenes'][origen]['dual'] | round(2) }}</li>
+            {% for var, rangos in resultados['sensibilidad']['variables'].items() %}
+            <li>{{ var }}:
+                <ul>
+                    <li>Rango inferior: {{ rangos['rango_inferior'] }}</li>
+                    <li>Rango superior: {{ rangos['rango_superior'] }}</li>
+                </ul>
+            </li>
             {% endfor %}
         </ul>
-        
-        <h4>Para destinos (demandas):</h4>
-        <ul>
-            {% for destino in datos['destinos'] %}
-            <li>{{ destino }}: Precio sombra {{ resultados['analisis_sensibilidad']['destinos'][destino]['dual'] | round(2) }}</li>
-            {% endfor %}
-        </ul>
-        
-        <!-- Campo para el contexto -->
         <div class="form-group">
             <label for="contexto">Contexto del problema:</label>
-            <textarea name="contexto" id="contexto" rows="4" placeholder="Ejemplo: Minimizar el costo de transporte de productos desde fábricas a almacenes."></textarea>
-        </div>
-        
+            <textarea name="contexto" id="contexto" rows="4" placeholder="Ejemplo: Minimizar el costo para producir espejos con marco de uno u otro material."></textarea>
+        </div>        
         <!-- Botón para analizar -->
         <button class="analizar-button" onclick="analizarResultados()">Analizar</button>
         

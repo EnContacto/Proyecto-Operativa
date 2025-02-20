@@ -2,61 +2,35 @@ from flask import Flask, render_template, request, jsonify, session
 from src.transporte.lector import LectorTransporte
 from src.transporte.solver import SolverTransporte
 from src.transporte.interpretador import InterpretadorTransporte
-from src.lineal.lector import LectorPL
-from src.lineal.solver import SolverPL
+from src.ple.lector import LectorPLE  
+from src.ple.solver import SolverPLE  
 from src.lineal.interpretador import InterpretadorPL
+from src.lineal.lector import LectorPL
+from src.lineal.solver  import SolverPL
+from src.ple.interpretador import InterpretadorPLE  
 from src.redes.solver import SolverRedes
+from src.bigm.gran_m import GranM
 from src.redes.lector import LectorRedes
 from dotenv import load_dotenv
 import os
 
-# Cargar variables de entorno
 load_dotenv()
 
 # Obtener la API Key de OpenAI
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
-app.secret_key = 'tu_clave_secreta_aqui'  # Necesario para usar sesiones
 
 # Instancias de los interpretadores
 interpretador_transporte = InterpretadorTransporte()
+interpretador_ple = InterpretadorPLE()  
 interpretador_lineal = InterpretadorPL()
 
-# Variable global para almacenar el estado de LectorRedes
 lector_redes = LectorRedes()
 
-# Ruta principal (página de inicio)
 @app.route('/')
 def index():
     return render_template('index.html')
-
-# Ruta para el problema de transporte
-@app.route('/transporte', methods=['GET', 'POST'])
-def transporte():
-    if request.method == 'POST':
-        # Procesar el archivo subido
-        archivo = request.files['archivo']
-        archivo.save('entrada_transporte.txt')
-
-        # Leer y resolver el problema
-        lector = LectorTransporte("entrada_transporte.txt")
-        if not lector.leer_archivo():
-            return "Error al leer el archivo de entrada"
-
-        datos = lector.obtener_datos()
-        solver = SolverTransporte(datos)
-        solver.crear_modelo()
-        resultados = solver.resolver()
-
-        # Interpretar los resultados
-        interpretacion = interpretador_transporte.interpretar(resultados)
-
-        return render_template('resultados_transporte.html', resultados=resultados, interpretacion=interpretacion, datos=datos)
-
-    return render_template('transporte.html')
-
-# Ruta para el problema de programación lineal
 @app.route('/lineal', methods=['GET', 'POST'])
 def lineal():
     if request.method == 'POST':
@@ -78,17 +52,105 @@ def lineal():
 
     return render_template('lineal.html')
 
-# Rutas para análisis de resultados
-@app.route('/analizar_transporte', methods=['POST'])
-def analizar_transporte():
-    resultados = request.json['resultados']
-    interpretacion = interpretador_transporte.interpretar(resultados)
-    return jsonify({'interpretacion': interpretacion})
-
 @app.route('/analizar_lineal', methods=['POST'])
 def analizar_lineal():
     resultados = request.json['resultados']
     interpretacion = interpretador_lineal.interpretar(resultados)
+    return jsonify({'interpretacion': interpretacion})
+
+@app.route('/transporte', methods=['GET', 'POST'])
+def transporte():
+    if request.method == 'POST':
+        # Procesar el archivo subido
+        archivo = request.files['archivo']
+        archivo.save('entrada_transporte.txt')
+
+        # Leer y resolver el problema
+        lector = LectorTransporte("entrada_transporte.txt")
+        if not lector.leer_archivo():
+            return "Error al leer el archivo de entrada"
+
+        datos = lector.obtener_datos()
+        solver = SolverTransporte(datos)
+        solver.crear_modelo()
+        resultados = solver.resolver()
+
+        # Obtener el contexto del problema desde el formulario
+        contexto = request.form.get('contexto')
+
+        # Interpretar los resultados con el contexto
+        interpretacion = interpretador_transporte.interpretar(resultados, contexto)
+
+        return render_template('resultados_transporte.html', resultados=resultados, interpretacion=interpretacion, datos=datos)
+
+    return render_template('transporte.html')
+
+@app.route('/ple', methods=['GET', 'POST'])
+def ple():
+    if request.method == 'POST':
+        archivo = request.files['archivo']
+        archivo.save('entrada_ple.txt')
+
+        lector = LectorPLE("entrada_ple.txt")
+        if not lector.leer_archivo():
+            return "Error al leer el archivo de entrada"
+
+        datos = lector.obtener_datos()
+        solver = SolverPLE(datos)
+        solver.crear_modelo()
+        resultados = solver.resolver()
+
+        # Incluir el tipo de problema en los resultados
+        resultados['tipo'] = datos.get('tipo', 'min')  # Por defecto es minimización
+
+        # Obtener el contexto del problema desde el formulario
+        contexto = request.form.get('contexto')
+
+        # Interpretar los resultados con el tipo de problema y el contexto
+        interpretacion = interpretador_ple.interpretar(resultados, resultados['tipo'], contexto)
+
+        return render_template('resultados_ple.html', resultados=resultados, interpretacion=interpretacion)
+
+    return render_template('ple.html')
+
+# Rutas para análisis de resultados
+@app.route('/analizar_transporte', methods=['POST'])
+def analizar_transporte():
+    # Verifica que los datos estén en formato JSON
+    if not request.is_json:
+        return jsonify({"error": "La solicitud debe ser en formato JSON"}), 400
+
+    # Obtiene los resultados y el contexto del cuerpo de la solicitud
+    data = request.json
+    resultados = data.get('resultados')
+    contexto = data.get('contexto')
+
+    if not resultados:
+        return jsonify({"error": "El campo 'resultados' es requerido"}), 400
+
+    # Genera la interpretación con el contexto
+    interpretacion = interpretador_transporte.interpretar(resultados, contexto)
+    return jsonify({'interpretacion': interpretacion})
+
+@app.route('/analizar_ple', methods=['POST'])
+def analizar_ple():
+    # Verifica que los datos estén en formato JSON
+    if not request.is_json:
+        return jsonify({"error": "La solicitud debe ser en formato JSON"}), 400
+
+    # Obtiene los resultados y el contexto del cuerpo de la solicitud
+    data = request.json
+    resultados = data.get('resultados')
+    contexto = data.get('contexto')
+
+    if not resultados:
+        return jsonify({"error": "El campo 'resultados' es requerido"}), 400
+
+    # Obtener el tipo de problema (min o max) desde los resultados
+    tipo_problema = resultados.get('tipo', 'min')  # Por defecto es minimización
+
+    # Genera la interpretación con el tipo de problema y el contexto
+    interpretacion = interpretador_ple.interpretar(resultados, tipo_problema, contexto)
     return jsonify({'interpretacion': interpretacion})
 
 # Ruta para el problema de redes
@@ -131,6 +193,29 @@ def redes():
     # Obtener las conexiones para mostrarlas en la plantilla
     conexiones = lector_redes.obtener_datos()['conexiones']
     return render_template('redes.html', conexiones=conexiones)
+@app.route('/bigm')
+def bigm():
+    
+    return render_template('bigm.html')  
+
+@app.route('/vogel')
+def vogel():
+    
+    return render_template('vogel.html')  
+@app.route('/resolver_bigm', methods=['POST'])
+def resolver_bigm():
+    # Obtener datos del formulario
+    funcion_objetivo = list(map(float, request.form['funcion_objetivo'].split(',')))
+    restricciones = [linea.split(',') for linea in request.form['restricciones'].split('\n')]
+    tipo_problema = request.form['tipo_problema']
+
+    # Crear y resolver el problema
+    problema = GranM(funcion_objetivo, restricciones, tipo_problema)
+    problema.resolver()
+    resultados = problema.obtener_resultados()
+
+    # Mostrar resultados
+    return render_template('bigm_resultados.html', iteraciones=resultados['iteraciones'], solucion_optima=resultados['solucion_optima'])
 
 if __name__ == '__main__':
     app.run(debug=True)

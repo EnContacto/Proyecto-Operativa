@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problema de Redes</title>
+    <!-- Enlazar el archivo CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        /* Estilos adicionales para redes.html */
+        .two-column-layout {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .left-column, .right-column {
+            width: 48%;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background: #6a11cb;
+        }
+
+        .connections-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .connections-list li {
+            background: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .connections-list li button {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .connections-list li button:hover {
+            background: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Banner principal -->
+    <div class="banner">
+        <h1>Problema de Redes</h1>
+        <p>Encuentra la ruta más corta o el flujo máximo en una red de nodos y conexiones.</p>
+    </div>
+
+    <!-- Contenedor de dos columnas -->
+    <div class="two-column-layout">
+        <!-- Columna izquierda: Formularios -->
+        <div class="left-column">
+            <!-- Formulario para agregar nodo -->
+            <div class="section">
+                <h2>Agregar Nodo</h2>
+                <form method="POST">
+                    <input type="hidden" name="accion" value="agregar_nodo">
+                    <div class="form-group">
+                        <label for="nodo">Nodo:</label>
+                        <input type="text" name="nodo" id="nodo" required>
+                    </div>
+                    <button type="submit">Agregar Nodo</button>
+                </form>
+            </div>
+
+            <!-- Formulario para agregar conexión -->
+            <div class="section">
+                <h2>Agregar Conexión</h2>
+                <form method="POST">
+                    <input type="hidden" name="accion" value="agregar_conexion">
+                    <div class="form-group">
+                        <label for="nodo1">Nodo 1:</label>
+                        <input type="text" name="nodo1" id="nodo1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nodo2">Nodo 2:</label>
+                        <input type="text" name="nodo2" id="nodo2" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="distancia">Distancia:</label>
+                        <input type="number" name="distancia" id="distancia" step="0.1" required>
+                    </div>
+                    <button type="submit">Agregar Conexión</button>
+                </form>
+            </div>
+
+            <!-- Formulario para calcular la ruta más corta -->
+            <div class="section">
+                <h2>Calcular Ruta Más Corta</h2>
+                <form method="POST">
+                    <input type="hidden" name="accion" value="calcular_ruta">
+                    <div class="form-group">
+                        <label for="inicio">Nodo Inicio:</label>
+                        <input type="text" name="inicio" id="inicio" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fin">Nodo Fin:</label>
+                        <input type="text" name="fin" id="fin" required>
+                    </div>
+                    <button type="submit">Calcular Ruta</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Columna derecha: Lista de conexiones -->
+        <div class="right-column">
+            <div class="section">
+                <h2>Conexiones Ingresadas</h2>
+                <ul class="connections-list">
+                    {% for conexion in conexiones %}
+                    <li>
+                        {{ conexion[0] }} - {{ conexion[1] }}: {{ conexion[2] }}
+                        <form method="POST" style="display: inline;">
+                            <input type="hidden" name="accion" value="eliminar_conexion">
+                            <input type="hidden" name="indice" value="{{ loop.index0 }}">
+                            <button type="submit">Eliminar</button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer>
+        <p>&copy; 2025 Problemas de Optimización. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>

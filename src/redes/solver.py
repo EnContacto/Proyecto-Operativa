@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('Agg')  # Usar el backend no interactivo
+matplotlib.use('Agg')  
 import matplotlib.pyplot as plt
 import networkx as nx
 

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problema de Redes</title>
+    <!-- Enlazar el archivo CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        /* Estilos adicionales para redes.html */
+        .two-column-layout {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .left-column, .right-column {
+            width: 48%;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background: #6a11cb;
+        }
+
+        .connections-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .connections-list li {
+            background: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .connections-list li button {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .connections-list li button:hover {
+            background: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <h1>Método de la Gran M</h1>
+        <p>Resuelve problemas de programación lineal paso a paso.</p>
+    </div>
+
+    <div class="container">
+        <form action="{{ url_for('resolver_bigm') }}" method="POST">
+            <label for="funcion_objetivo">Función Objetivo (coeficientes separados por coma):</label>
+            <input type="text" id="funcion_objetivo" name="funcion_objetivo" required>
+
+            <label for="restricciones">Restricciones (una por línea, formato: coeficientes,desigualdad,valor):</label>
+            <textarea id="restricciones" name="restricciones" rows="5" required></textarea>
+
+            <label for="tipo_problema">Tipo de Problema:</label>
+            <select id="tipo_problema" name="tipo_problema" required>
+                <option value="maximizar">Maximizar</option>
+                <option value="minimizar">Minimizar</option>
+            </select>
+
+            <button type="submit">Resolver</button>
+        </form>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Problemas de Optimización. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>

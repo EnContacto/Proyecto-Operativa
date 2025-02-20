@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados - Método de la Gran M</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="banner">
+        <h1>Resultados - Método de la Gran M</h1>
+    </div>
+
+    <div class="container">
+        <h2>Iteraciones:</h2>
+        {% for iteracion in iteraciones %}
+        <div class="iteracion">
+            <table>
+                {% for fila in iteracion %}
+                <tr>
+                    {% for valor in fila %}
+                    <td>{{ valor }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% endfor %}
+
+        <h2>Solución Óptima:</h2>
+        <div class="solucion">
+            <p>Valores: {{ solucion_optima }}</p>
+        </div>
+    </div>
+</body>
+</html>
